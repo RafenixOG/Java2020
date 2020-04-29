@@ -5,7 +5,7 @@ import javax.swing.*;
 
 public class PanneauAccueil extends JPanel {
 	
-	private JLabel texteAccueil, texteAccueil2;
+	private JLabel texteAccueil;
     private int style = Font.BOLD;
     private String police = "Verdana";
 
@@ -13,12 +13,10 @@ public class PanneauAccueil extends JPanel {
     {
         setLayout(new GridBagLayout());
 
-        texteAccueil = new JLabel("Bienvenue dans notre projet java !");
+        texteAccueil = new JLabel("<html>Bienvenue dans notre projet java !<br>Naviguez à travers les différents menus.</html>");
         texteAccueil.setFont(new Font(police, style, 14));
-        texteAccueil2 = new JLabel("texte à mettre en dessous");
-        texteAccueil2.setFont(new Font(police, style, 12));
         add(texteAccueil);
-        add(texteAccueil2);
+
 
         setVisible(true);
     }
