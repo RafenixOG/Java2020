@@ -1,5 +1,7 @@
 package application;
 
-public class PanneauRechercheAnnee {
+import javax.swing.*;
+
+public class PanneauRechercheAnnee extends JPanel {
 
 }
