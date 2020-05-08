@@ -112,17 +112,17 @@ public class PanneauEncodage extends JPanel{
 			dateValidationTF = new JTextField(10);
 			dateValidationTF.setEditable(false);
 			add(dateValidationTF);
-			software = new JLabel("Code Software :");
+			software = new JLabel("Software :");
 			software.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(software);
 			softwareCB = new JComboBox(softwareListe);		//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
 			add(softwareCB);
-			responsable = new JLabel("Matricule du responsable :");
+			responsable = new JLabel("Nom du responsable :");
 			responsable.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(responsable);
 			responsableCB = new JComboBox(responsableListe);	//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
 			add(responsableCB);
-			os = new JLabel("Code OS :");
+			os = new JLabel("Nom OS :");
 			os.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(os);
 			osCB = new JComboBox(osListe);		//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
@@ -138,7 +138,7 @@ public class PanneauEncodage extends JPanel{
 			insertionSQL = "insert into installation (IdInstallation, DateInstallation, TypeInstallation, Commentaires, DureeInstallation, RefProcedureInstallation, Validation, DateValidation, CodeSoftware, Matricule, CodeOS) values (?,?,?,?,?,?,?,?,?,?,?)";
 			myPrepStatInsertion = connection.prepareStatement(insertionSQL);
 			
-			String idInstallSQL = "select IdInstallation from installation";
+			String idInstallSQL = "select IdInstallation from installation"; //SQL mettre "MAX" pour avoir la valeur la plus élevée
 			PreparedStatement myPrepStatIdInstall = connection.prepareStatement(idInstallSQL);
 			idInstallListe = AccessBDGen.creerListe1Colonne(myPrepStatIdInstall);
 			idInstallInt = idInstallListe.length + 1;
@@ -167,7 +167,7 @@ public class PanneauEncodage extends JPanel{
 			if(e.getSource() == valider) {
 				try {
 					myPrepStatInsertion.setInt(1, idInstallInt);
-					myPrepStatInsertion.setDate(2, new java.sql.Date( new GregorianCalendar(GregorianCalendar.getInstance().get(GregorianCalendar.YEAR),GregorianCalendar.getInstance().get(GregorianCalendar.MONTH)-1,GregorianCalendar.getInstance().get(GregorianCalendar.DAY_OF_MONTH)).getTimeInMillis()));
+					myPrepStatInsertion.setDate(2, new java.sql.Date( new GregorianCalendar().getTimeInMillis()));
 					myPrepStatInsertion.setInt(3, typeInstall);
 					if(commentaireTF.getText().equals("") == false) {
 						myPrepStatInsertion.setString(4, commentaireTF.getText());
@@ -199,23 +199,35 @@ public class PanneauEncodage extends JPanel{
 					if(dateValidationTF.getText().equals("") == false) {
 						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 						Date date = null;
-					    try {
-							date = (Date) dateFormat.parse(dateValidationTF.getText());
-							myPrepStatInsertion.setDate(8, date);
-						} catch (ParseException parse) {
-							parse.printStackTrace();
-						}
+					    
+						date = (Date) dateFormat.parse(dateValidationTF.getText());
+						myPrepStatInsertion.setDate(8, date);
+						 
 					}
 					else {
 						myPrepStatInsertion.setNull(8, Types.TIMESTAMP);
 					}
-					myPrepStatInsertion.setString(9, String.valueOf(softwareCB.getSelectedItem()));
-					myPrepStatInsertion.setString(10, String.valueOf(responsableCB.getSelectedItem()));
-					myPrepStatInsertion.setString(11, String.valueOf(osCB.getSelectedItem()));
-					System.out.println("Validé");
+					Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root"); 
+					String instructionCodeSoftware = "select CodeSoftware from software where Nom = \"" + softwareCB.getSelectedItem() + "\"";
+					PreparedStatement myPrepStatCodeSoftware = connection.prepareStatement(instructionCodeSoftware);
+					Object[] codeSoftware = AccessBDGen.creerListe1Colonne(myPrepStatCodeSoftware);
+					String instructionCodeResponsable = "select Matricule from responsablereseaux where NomPrenom = \"" + responsableCB.getSelectedItem() + "\"";
+					PreparedStatement myPrepStatCodeResponsable = connection.prepareStatement(instructionCodeResponsable);
+					Object[] codeResponsable = AccessBDGen.creerListe1Colonne(myPrepStatCodeResponsable);
+					String instructionCodeOs = "select CodeOS from os where Libelle = \"" + osCB.getSelectedItem() + "\"";
+					PreparedStatement myPrepStatCodeOs = connection.prepareStatement(instructionCodeOs);
+					Object[] codeOs = AccessBDGen.creerListe1Colonne(myPrepStatCodeOs);
+					myPrepStatInsertion.setString(9, (String)codeSoftware[0]); //code du software
+					myPrepStatInsertion.setString(10, (String)codeResponsable[0]); //code du responsable
+					myPrepStatInsertion.setString(11, (String)codeOs[0]); //code de l'os
+					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
+					System.out.println(nbUpdatedLines);
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
+				}
+				catch (ParseException parse) {
+					parse.printStackTrace();
 				}
 			}
 		}
