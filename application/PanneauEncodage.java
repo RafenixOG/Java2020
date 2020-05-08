@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.GregorianCalendar;
+import java.util.Properties;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -15,6 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import org.jdatepicker.impl.JDatePanelImpl;
+import org.jdatepicker.impl.JDatePickerImpl;
+import org.jdatepicker.impl.UtilDateModel;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -30,7 +35,7 @@ import accessBD.*;
 
 public class PanneauEncodage extends JPanel{
 	private JLabel idInstall, software, os, responsable, validation, dateValidation, commentaire, dureeInstall, refProcedure;
-	private JTextField idInstallTF, dateValidationTF, commentaireTF, dureeInstallTF, refProcedureTF;
+	private JTextField idInstallTF, commentaireTF, dureeInstallTF, refProcedureTF;
 	private JComboBox softwareCB, osCB, responsableCB;
 	private JRadioButton termine, enCours, aPrevoir;
 	private ButtonGroup validationBG;
@@ -41,6 +46,11 @@ public class PanneauEncodage extends JPanel{
 	private int idInstallInt;
 	private String insertionSQL;
 	private PreparedStatement myPrepStatInsertion;
+	//Besoin du jdatepicker-1.3.4.jar, à ajouter dans les propriétés du projet comme pour le jar de la DB
+	private UtilDateModel model;
+    private JDatePanelImpl datePanel;
+    private JDatePickerImpl datePicker;
+    private Properties p;
 	
 	
 	public PanneauEncodage() {
@@ -109,9 +119,17 @@ public class PanneauEncodage extends JPanel{
 			dateValidation = new JLabel("Date de validation :");		//gestion d'erreur si la date n'à pas été entrée au format dd/mm/YYYY
 			dateValidation.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(dateValidation);
-			dateValidationTF = new JTextField(10);
-			dateValidationTF.setEditable(false);
-			add(dateValidationTF);
+			//Tout ce qui est nécessaire au JDatePicker--------
+			p = new Properties();
+	        p.put("text.today", "Ajourd'hui");
+	        p.put("text.month", "Mois");
+	        p.put("text.year", "Année");
+	        model = new UtilDateModel();
+	        datePanel = new JDatePanelImpl(model, p);
+	        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
+	        //-------------------------------------------------
+	        datePicker.getComponent(1).setEnabled(false);
+	        add(datePicker);
 			software = new JLabel("Software :");
 			software.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(software);
@@ -135,13 +153,13 @@ public class PanneauEncodage extends JPanel{
 			
 			setVisible(true);
 			
-			insertionSQL = "insert into installation (IdInstallation, DateInstallation, TypeInstallation, Commentaires, DureeInstallation, RefProcedureInstallation, Validation, DateValidation, CodeSoftware, Matricule, CodeOS) values (?,?,?,?,?,?,?,?,?,?,?)";
+			insertionSQL = "insert into installation values (?,?,?,?,?,?,?,?,?,?,?)";
 			myPrepStatInsertion = connection.prepareStatement(insertionSQL);
 			
-			String idInstallSQL = "select IdInstallation from installation"; //SQL mettre "MAX" pour avoir la valeur la plus élevée
+			String idInstallSQL = "select max(IdInstallation) from installation"; //SQL mettre "MAX" pour avoir la valeur la plus élevée
 			PreparedStatement myPrepStatIdInstall = connection.prepareStatement(idInstallSQL);
 			idInstallListe = AccessBDGen.creerListe1Colonne(myPrepStatIdInstall);
-			idInstallInt = idInstallListe.length + 1;
+			idInstallInt = (int)idInstallListe[0] + 1;
 			idInstallTF.setText(String.valueOf(idInstallInt));
 			
 			
@@ -156,11 +174,11 @@ public class PanneauEncodage extends JPanel{
 	private class Gestionnaire implements ItemListener, ActionListener{
 		public void itemStateChanged(ItemEvent e) {
 			if(e.getSource() == aPrevoir && e.getStateChange( ) == ItemEvent.SELECTED) {
-				dateValidationTF.setEditable(true);
+				datePicker.getComponent(1).setEnabled(true);
 			}
 			else {
-				dateValidationTF.setText("");
-				dateValidationTF.setEditable(false);
+    			datePicker.getJFormattedTextField().setText("");
+				datePicker.getComponent(1).setEnabled(false);
 			}
 		}
 		public void actionPerformed(ActionEvent e) {
@@ -196,12 +214,13 @@ public class PanneauEncodage extends JPanel{
 					if(aPrevoir.isSelected()) {
 						myPrepStatInsertion.setString(7, "A prevoir");
 					}
-					if(dateValidationTF.getText().equals("") == false) {
-						SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-						Date date = null;
-					    
-						date = (Date) dateFormat.parse(dateValidationTF.getText());
-						myPrepStatInsertion.setDate(8, date);
+					if(datePicker.getJFormattedTextField().getText().equals("") == false) {
+						String[] dateSepareeString = datePicker.getJFormattedTextField().getText().split("-", 3);
+		    			int[] dateSepareeint = {0, 0, 0};
+		    			for(int i = 0; i < dateSepareeString.length; i++) {
+		    				dateSepareeint[i] = Integer.parseInt(dateSepareeString[i]);
+		    			}
+						myPrepStatInsertion.setDate(8, new java.sql.Date(new GregorianCalendar(dateSepareeint[0], dateSepareeint[1]-1, dateSepareeint[2]+1).getTimeInMillis()));;
 						 
 					}
 					else {
@@ -220,14 +239,12 @@ public class PanneauEncodage extends JPanel{
 					myPrepStatInsertion.setString(9, (String)codeSoftware[0]); //code du software
 					myPrepStatInsertion.setString(10, (String)codeResponsable[0]); //code du responsable
 					myPrepStatInsertion.setString(11, (String)codeOs[0]); //code de l'os
+					System.out.println("passé toutes les instructions");
 					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
 					System.out.println(nbUpdatedLines);
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
-				}
-				catch (ParseException parse) {
-					parse.printStackTrace();
 				}
 			}
 		}
