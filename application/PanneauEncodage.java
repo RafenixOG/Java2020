@@ -12,6 +12,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -220,7 +221,14 @@ public class PanneauEncodage extends JPanel{
 		    			for(int i = 0; i < dateSepareeString.length; i++) {
 		    				dateSepareeint[i] = Integer.parseInt(dateSepareeString[i]);
 		    			}
-						myPrepStatInsertion.setDate(8, new java.sql.Date(new GregorianCalendar(dateSepareeint[0], dateSepareeint[1]-1, dateSepareeint[2]+1).getTimeInMillis()));;
+		    			GregorianCalendar ajd = new GregorianCalendar();
+		    	        GregorianCalendar dateSelectionnee = new GregorianCalendar(dateSepareeint[0], dateSepareeint[1]-1, dateSepareeint[2]);
+		    	        if(dateSelectionnee.getTimeInMillis() - ajd.getTimeInMillis() <= 0) {
+		    	        	throw new DateException();
+		    	        }
+		    	        else {
+							myPrepStatInsertion.setDate(8, new java.sql.Date(new GregorianCalendar(dateSepareeint[0], dateSepareeint[1]-1, dateSepareeint[2]+1).getTimeInMillis()));;
+		    	        }
 						 
 					}
 					else {
@@ -245,6 +253,12 @@ public class PanneauEncodage extends JPanel{
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
+				}
+				catch(NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(getParent(), "La durée que vous avez introduit n'est pas un entier.\nVeuillez introduire une durée en minutes.", "ERREUR TYPE VALEUR ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
+				}
+				catch(DateException dateErronee) {
+					JOptionPane.showMessageDialog(getParent(), dateErronee, "ERREUR DATE ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
