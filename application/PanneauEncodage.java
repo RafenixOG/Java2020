@@ -250,6 +250,10 @@ public class PanneauEncodage extends JPanel{
 					System.out.println("passé toutes les instructions");
 					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
 					System.out.println(nbUpdatedLines);
+					idInstallInt++;
+					idInstallTF.setText(String.valueOf(idInstallInt));
+
+					
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
