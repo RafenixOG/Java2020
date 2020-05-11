@@ -111,6 +111,13 @@ public class FenetrePrincipale extends JFrame{
                 cont.validate();
                 cont.repaint();
 			}
+			
+			if (event.getSource() == rechercherTypePc) {
+				cont.removeAll();
+                cont.add(panneauRecherchePc);
+                cont.validate();
+                cont.repaint();
+			}
 		}
 	}
 }
