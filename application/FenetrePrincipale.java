@@ -118,6 +118,13 @@ public class FenetrePrincipale extends JFrame{
                 cont.validate();
                 cont.repaint();
 			}
+			
+			if (event.getSource() == rechercherParAnnee) {
+				cont.removeAll();
+                cont.add(panneauRechercheAnnee);
+                cont.validate();
+                cont.repaint();
+			}
 		}
 	}
 }
