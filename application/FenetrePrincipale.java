@@ -22,7 +22,7 @@ public class FenetrePrincipale extends JFrame{
 	
 	public FenetrePrincipale () {
 		
-		super("Projet série 5");
+		super("Projet sÃ©rie 5");
 		setBounds(600,300,500,500);
 		
 		addWindowListener(new WindowAdapter() {
@@ -43,7 +43,7 @@ public class FenetrePrincipale extends JFrame{
 		lister = new JMenuItem("Lister");
 		supprimer = new JMenuItem("Supprimer");
 		rechercherTypePc = new JMenuItem("Rechercher par type de PC");
-		rechercherParAnnee = new JMenuItem("Rechercher par année");
+		rechercherParAnnee = new JMenuItem("Rechercher par annÃ©e");
 		support = new JMenuItem("Support");
 		information = new JMenuItem("Information");
 		
@@ -119,6 +119,13 @@ public class FenetrePrincipale extends JFrame{
                 cont.repaint();
 			}
 			
+			if (event.getSource() == rechercherParAnnee) {
+				cont.removeAll();
+                cont.add(panneauRechercheAnnee);
+                cont.validate();
+                cont.repaint();
+      }
+
 			if (event.getSource() == supprimer) {
 				cont.removeAll();
                 cont.add(panneauSuppression);
