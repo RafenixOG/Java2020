@@ -118,6 +118,13 @@ public class FenetrePrincipale extends JFrame{
                 cont.validate();
                 cont.repaint();
 			}
+			
+			if (event.getSource() == supprimer) {
+				cont.removeAll();
+                cont.add(panneauSuppression);
+                cont.validate();
+                cont.repaint();
+			}
 		}
 	}
 }
