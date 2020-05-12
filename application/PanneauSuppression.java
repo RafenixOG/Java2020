@@ -10,7 +10,7 @@ import accessBD.TableModelGen;
 
 public class PanneauSuppression extends JPanel {
 	private JLabel labelFamilleSoftware, labelIdASupprimer; 
-	private JButton confirmer, annuler; 
+	private JButton supprimer, annuler; 
 	private JComboBox comboLibelles, comboId;
 	private Object[] familleSoftwareListe, idListe;
 	private JTable visualisationJTable;
@@ -21,6 +21,7 @@ public class PanneauSuppression extends JPanel {
 		
 		setLayout(new FlowLayout());
 		GestionnaireAction item = new GestionnaireAction();
+		GestionnaireAction action = new GestionnaireAction();
 		
 		try {
 			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
@@ -49,16 +50,23 @@ public class PanneauSuppression extends JPanel {
 			panneauTable.add(visualisationScrollPane);
 			add(panneauTable);
 			
+			labelIdASupprimer = new JLabel("Id installation à supprimer : ");
+			add(labelIdASupprimer);
 			String recupIdSQL = "Select IdInstallation from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
-					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
+					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft";
 			PreparedStatement  prepStatId  = connection.prepareStatement(recupIdSQL);
 			idListe =  AccessBDGen.creerListe1Colonne(prepStatId);
 			
-			labelIdASupprimer = new JLabel("Id à supprimer : ");
-			add(labelIdASupprimer);
 			comboId = new JComboBox (idListe);
-			add(comboId);
 			comboId.addItemListener(item);
+			add(comboId);
+			
+			supprimer = new JButton("Supprimer");
+			supprimer.addActionListener(action);
+			add(supprimer);
+			
+			annuler = new JButton ("Annuler");
+			add(annuler);
 			
 			setVisible(true);
 		}
@@ -68,7 +76,7 @@ public class PanneauSuppression extends JPanel {
 		} 
 	}
 	
-	private class GestionnaireAction implements ItemListener{
+	private class GestionnaireAction implements ItemListener, ActionListener{
 		
 		public void itemStateChanged(ItemEvent e) {
 			
@@ -91,6 +99,24 @@ public class PanneauSuppression extends JPanel {
 			
 			catch(SQLException e1) {
 				System.out.println(e1.getMessage());
+			}
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == supprimer) {
+				try {
+					Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
+					String deleteSQL = "DELETE FROM installation where IdInstallation = " + comboId.getSelectedItem();
+					PreparedStatement  prepStatDelete  = connection.prepareStatement(deleteSQL);
+					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id :" + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
+					if(n == JOptionPane.YES_OPTION) {
+						int  nbUpdatedLines = prepStatDelete.executeUpdate();
+						System.out.println(nbUpdatedLines);
+					}
+;				}
+				catch(SQLException e1) {
+					System.out.println(e1.getMessage());
+				}
 			}
 		}
 	}
