@@ -101,7 +101,7 @@ public class PanneauEncodage extends JPanel{
 			validation.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(validation);
 			panneauRadio = new JPanel();
-			panneauRadio.setLayout(new GridLayout(3,1,0,5));
+			panneauRadio.setLayout(new GridLayout(3,1,0,3));
 			termine = new JRadioButton("Terminée");
 			termine.addItemListener(item);
 			panneauRadio.add(termine);
@@ -150,6 +150,7 @@ public class PanneauEncodage extends JPanel{
 			valider.addActionListener(action);
 			add(valider);
 			retour = new JButton("Retour");
+			retour.addActionListener(action);
 			add(retour);
 			
 			setVisible(true);
@@ -170,6 +171,10 @@ public class PanneauEncodage extends JPanel{
 			System.out.println(e.getMessage()); 
 		} 
 		
+	}
+	
+	public JButton getRetour() {
+		return retour;
 	}
 	 
 	private class Gestionnaire implements ItemListener, ActionListener{
@@ -249,10 +254,13 @@ public class PanneauEncodage extends JPanel{
 					myPrepStatInsertion.setString(11, (String)codeOs[0]); //code de l'os
 					System.out.println("passé toutes les instructions");
 					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
-					System.out.println(nbUpdatedLines);
+					System.out.println("Lignes mises à jour :" + nbUpdatedLines);
 					idInstallInt++;
 					idInstallTF.setText(String.valueOf(idInstallInt));
-
+					commentaireTF.setText("");
+					dureeInstallTF.setText("");
+					refProcedureTF.setText("");
+					validationBG.clearSelection();
 					
 				} 
 				catch (SQLException e1) {
@@ -264,6 +272,12 @@ public class PanneauEncodage extends JPanel{
 				catch(DateException dateErronee) {
 					JOptionPane.showMessageDialog(getParent(), dateErronee, "ERREUR DATE ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+			if(e.getSource() == retour) {
+				commentaireTF.setText("");
+				dureeInstallTF.setText("");
+				refProcedureTF.setText("");
+				validationBG.clearSelection();
 			}
 		}
 	}

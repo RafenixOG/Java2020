@@ -75,6 +75,8 @@ public class FenetrePrincipale extends JFrame{
 		cont = getContentPane();
 		cont.add(panneauAccueil);
 		
+		panneauEncodage.getRetour().addActionListener(g);
+		
 		setJMenuBar(barreMenu);
 		setVisible(true);
 		
@@ -129,6 +131,13 @@ public class FenetrePrincipale extends JFrame{
 			if (event.getSource() == supprimer) {
 				cont.removeAll();
                 cont.add(panneauSuppression);
+                cont.validate();
+                cont.repaint();
+			}
+			
+			if(event.getSource() == panneauEncodage.getRetour()) {
+				cont.removeAll();
+                cont.add(panneauAccueil);
                 cont.validate();
                 cont.repaint();
 			}
