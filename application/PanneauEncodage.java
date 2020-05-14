@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -52,9 +54,12 @@ public class PanneauEncodage extends JPanel{
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
     private Properties p;
+    private PanneauListe panneauListe;
 	
 	
 	public PanneauEncodage() {
+		
+		panneauListe = new PanneauListe();
 		
 		try  {
 			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root"); 
@@ -262,6 +267,19 @@ public class PanneauEncodage extends JPanel{
 					refProcedureTF.setText("");
 					validationBG.clearSelection();
 					
+					//mise à jour seemless du PanneauListe (ne fonctionne pas)
+					String sqlInstruction = "select * from installation";
+					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
+					JTable table = new JTable(tableDemande);
+					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					JScrollPane tableSP = new JScrollPane(table);
+					JPanel pan = new JPanel();
+					pan.removeAll();
+					pan.add(tableSP);
+					pan.validate();
+					pan.repaint();
+					panneauListe.setPanneauSP(pan);
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());

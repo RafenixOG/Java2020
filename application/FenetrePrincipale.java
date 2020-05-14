@@ -23,7 +23,8 @@ public class FenetrePrincipale extends JFrame{
 	public FenetrePrincipale () {
 		
 		super("Projet sÃ©rie 5");
-		setBounds(600,300,500,500);
+		setBounds(600,200,500,550);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
+		//setBounds(600,200,500,550);
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {

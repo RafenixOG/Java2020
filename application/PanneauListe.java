@@ -37,7 +37,7 @@ public class PanneauListe extends JPanel{
 		
 		panneauSP_GBC = new GridBagConstraints();
 		panneauSP_GBC.fill = GridBagConstraints.HORIZONTAL;
-		panneauSP_GBC.ipady = 350;
+		panneauSP_GBC.ipady = 410;	//taille min tant que j'ai pas trouvé comment redimensionné le JScrollPane
 		panneauSP_GBC.weightx = 0.5;
 		panneauSP_GBC.gridx = 0;
 		panneauSP_GBC.gridy = 1;
@@ -74,6 +74,10 @@ public class PanneauListe extends JPanel{
 		}
 		
 		setVisible(true);
+	}
+	
+	public void setPanneauSP(JPanel panneauSP) {
+		this.panneauSP = panneauSP;
 	}
 	
 	private class GestionnaireAction implements ItemListener {
