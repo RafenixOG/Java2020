@@ -23,7 +23,10 @@ public class FenetrePrincipale extends JFrame{
 	public FenetrePrincipale () {
 		
 		super("Projet sÃ©rie 5");
-		setBounds(600,300,500,500);
+		setBounds(600,200,500,550);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
+		//setBounds(600,200,500,550);
+		
+		setResizable(false);
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -74,6 +77,8 @@ public class FenetrePrincipale extends JFrame{
 		panneauSuppression = new PanneauSuppression();
 		cont = getContentPane();
 		cont.add(panneauAccueil);
+		
+		panneauEncodage.getRetour().addActionListener(g);
 		
 		setJMenuBar(barreMenu);
 		setVisible(true);
@@ -129,6 +134,13 @@ public class FenetrePrincipale extends JFrame{
 			if (event.getSource() == supprimer) {
 				cont.removeAll();
                 cont.add(panneauSuppression);
+                cont.validate();
+                cont.repaint();
+			}
+			
+			if(event.getSource() == panneauEncodage.getRetour()) {
+				cont.removeAll();
+                cont.add(panneauAccueil);
                 cont.validate();
                 cont.repaint();
 			}

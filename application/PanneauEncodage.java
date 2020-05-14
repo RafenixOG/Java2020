@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -52,9 +54,12 @@ public class PanneauEncodage extends JPanel{
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
     private Properties p;
+    private PanneauListe panneauListe;
 	
 	
 	public PanneauEncodage() {
+		
+		panneauListe = new PanneauListe();
 		
 		try  {
 			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root"); 
@@ -101,7 +106,7 @@ public class PanneauEncodage extends JPanel{
 			validation.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(validation);
 			panneauRadio = new JPanel();
-			panneauRadio.setLayout(new GridLayout(3,1,0,5));
+			panneauRadio.setLayout(new GridLayout(3,1,0,3));
 			termine = new JRadioButton("Terminée");
 			termine.addItemListener(item);
 			panneauRadio.add(termine);
@@ -150,6 +155,7 @@ public class PanneauEncodage extends JPanel{
 			valider.addActionListener(action);
 			add(valider);
 			retour = new JButton("Retour");
+			retour.addActionListener(action);
 			add(retour);
 			
 			setVisible(true);
@@ -170,6 +176,10 @@ public class PanneauEncodage extends JPanel{
 			System.out.println(e.getMessage()); 
 		} 
 		
+	}
+	
+	public JButton getRetour() {
+		return retour;
 	}
 	 
 	private class Gestionnaire implements ItemListener, ActionListener{
@@ -249,11 +259,27 @@ public class PanneauEncodage extends JPanel{
 					myPrepStatInsertion.setString(11, (String)codeOs[0]); //code de l'os
 					System.out.println("passé toutes les instructions");
 					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
-					System.out.println(nbUpdatedLines);
+					System.out.println("Lignes mises à jour :" + nbUpdatedLines);
 					idInstallInt++;
 					idInstallTF.setText(String.valueOf(idInstallInt));
-
+					commentaireTF.setText("");
+					dureeInstallTF.setText("");
+					refProcedureTF.setText("");
+					validationBG.clearSelection();
 					
+					//mise à jour seemless du PanneauListe (ne fonctionne pas)
+					String sqlInstruction = "select * from installation";
+					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
+					JTable table = new JTable(tableDemande);
+					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					JScrollPane tableSP = new JScrollPane(table);
+					JPanel pan = new JPanel();
+					pan.removeAll();
+					pan.add(tableSP);
+					pan.validate();
+					pan.repaint();
+					panneauListe.setPanneauSP(pan);
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
@@ -264,6 +290,12 @@ public class PanneauEncodage extends JPanel{
 				catch(DateException dateErronee) {
 					JOptionPane.showMessageDialog(getParent(), dateErronee, "ERREUR DATE ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
 				}
+			}
+			if(e.getSource() == retour) {
+				commentaireTF.setText("");
+				dureeInstallTF.setText("");
+				refProcedureTF.setText("");
+				validationBG.clearSelection();
 			}
 		}
 	}

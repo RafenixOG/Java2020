@@ -1,6 +1,9 @@
 package application;
 
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Connection;
@@ -18,12 +21,29 @@ public class PanneauRecherchePc extends JPanel {
 	private JScrollPane defilant;
 	private JTable table;
 	private JPanel panneauTable;
+	private GridBagConstraints comboGBC, panneauTableGBC;
 	
 	public PanneauRecherchePc() {
 		
-		setLayout(new FlowLayout());
+		setLayout(new GridBagLayout());
 		
 		Gestionnaire item = new Gestionnaire();
+		
+		comboGBC = new GridBagConstraints();
+		comboGBC.weightx = 0.5;
+		comboGBC.gridx = 2;
+		comboGBC.gridy = 0;
+		comboGBC.gridwidth = 1;
+		comboGBC.insets = new Insets(0,0,0,20);
+		comboGBC.anchor = GridBagConstraints.NORTHEAST;
+		
+		panneauTableGBC = new GridBagConstraints();
+		panneauTableGBC.fill = GridBagConstraints.HORIZONTAL;
+		panneauTableGBC.ipady = 410;	//taille min tant que j'ai pas trouvé comment redimensionné le JScrollPane
+		panneauTableGBC.weightx = 0.5;
+		panneauTableGBC.gridx = 0;
+		panneauTableGBC.gridy = 1;
+		panneauTableGBC.gridwidth = 3;
 		
 		try {
 			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
@@ -33,7 +53,7 @@ public class PanneauRecherchePc extends JPanel {
 			description = AccessBDGen.creerListe1Colonne(prepStatDescription);
 			descriptionCB = new JComboBox(description);
 			descriptionCB.addItemListener(item);
-			add(descriptionCB);
+			add(descriptionCB, comboGBC);
 			
 			String sqlDefaut = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
 					+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
@@ -46,7 +66,7 @@ public class PanneauRecherchePc extends JPanel {
 			
 			panneauTable = new JPanel();
 			panneauTable.add(defilant);
-			add(panneauTable);
+			add(panneauTable, panneauTableGBC);
 			
 			
 		}
@@ -62,87 +82,20 @@ public class PanneauRecherchePc extends JPanel {
 		public void itemStateChanged(ItemEvent e) {
 			try {
 				Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
-				switch(descriptionCB.getSelectedIndex()) {
-				case 0:if(e.getStateChange() == ItemEvent.SELECTED) {
-					String sqlAthlonIIX3 = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
+				if(e.getSource() == descriptionCB) {
+					String sqlInstruction = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
 							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
-							+ "where software.CleInstallation is null and typepc.Description = \"Athlon II X3\"";
-					PreparedStatement prepStatAthlonIIX3 = connection.prepareStatement(sqlAthlonIIX3);
-					TableModelGen tableAthlonIIX3 = AccessBDGen.creerTableModel(prepStatAthlonIIX3);
-					table = new JTable(tableAthlonIIX3);
+							+ "where software.CleInstallation is null and typepc.Description = \"" + descriptionCB.getSelectedItem() +"\"";
+					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
+					table = new JTable(tableDemande);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 					defilant = new JScrollPane(table);
+					defilant.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 					panneauTable.removeAll();
 					panneauTable.add(defilant);
-					panneauTable.validate();
-					panneauTable.repaint();
-					System.out.println("fait");
-    				break;
-				}
-				case 1:if(e.getStateChange() == ItemEvent.SELECTED) {
-					String sqlCoreI7_2600 = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
-							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
-							+ "where software.CleInstallation is null and typepc.Description = \"Core I7 2600\"";
-					PreparedStatement prepStatCoreI7_2600 = connection.prepareStatement(sqlCoreI7_2600);
-					TableModelGen tableCoreI7_2600 = AccessBDGen.creerTableModel(prepStatCoreI7_2600);
-					table = new JTable(tableCoreI7_2600);
-					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					defilant = new JScrollPane(table);
-					panneauTable.removeAll();
-					panneauTable.add(defilant);
-					panneauTable.validate();
-					panneauTable.repaint();
-					System.out.println("fait");
-    				break;
-				}
-				case 2:if(e.getStateChange() == ItemEvent.SELECTED) {
-					String sqlCeleron530 = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
-							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
-							+ "where software.CleInstallation is null and typepc.Description = \"Celeron 530\"";
-					PreparedStatement prepStatCeleron530 = connection.prepareStatement(sqlCeleron530);
-					TableModelGen tableCeleron530 = AccessBDGen.creerTableModel(prepStatCeleron530);
-					table = new JTable(tableCeleron530);
-					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					defilant = new JScrollPane(table);
-					panneauTable.removeAll();
-					panneauTable.add(defilant);
-					panneauTable.validate();
-					panneauTable.repaint();
-					System.out.println("fait");
-    				break;
-				}
-				case 3:if(e.getStateChange() == ItemEvent.SELECTED) {
-					String sqlPentium4_3GB = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
-							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
-							+ "where software.CleInstallation is null and typepc.Description = \"Pentium 4 3GB\"";
-					PreparedStatement prepStatPentium4_3GB = connection.prepareStatement(sqlPentium4_3GB);
-					TableModelGen tablePentium4_3GB = AccessBDGen.creerTableModel(prepStatPentium4_3GB);
-					table = new JTable(tablePentium4_3GB);
-					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					defilant = new JScrollPane(table);
-					panneauTable.removeAll();
-					panneauTable.add(defilant);
-					panneauTable.validate();
-					panneauTable.repaint();
-					System.out.println("fait");
-    				break;
-				}
-				case 4:if(e.getStateChange() == ItemEvent.SELECTED) {
-					String sqlDualCore2x_1GB8 = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
-							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
-							+ "where software.CleInstallation is null and typepc.Description = \"Pentium 4 3GB\"";
-					PreparedStatement prepStatDualCore2x_1GB8 = connection.prepareStatement(sqlDualCore2x_1GB8);
-					TableModelGen tableDualCore2x_1GB8 = AccessBDGen.creerTableModel(prepStatDualCore2x_1GB8);
-					table = new JTable(tableDualCore2x_1GB8);
-					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					defilant = new JScrollPane(table);
-					panneauTable.removeAll();
-					panneauTable.add(defilant);
-					panneauTable.validate();
-					panneauTable.repaint();
-					System.out.println("fait");
-    				break;
-				}
+    				panneauTable.validate();
+    				panneauTable.repaint();
 				}
 			}
 			catch(SQLException e1) {
