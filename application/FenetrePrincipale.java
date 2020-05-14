@@ -26,6 +26,8 @@ public class FenetrePrincipale extends JFrame{
 		setBounds(600,200,500,550);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
 		//setBounds(600,200,500,550);
 		
+		setResizable(false);
+		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);

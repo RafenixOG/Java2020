@@ -15,18 +15,16 @@ import accessBD.TableModelGen;
 public class PanneauListe extends JPanel{
 	private JComboBox comboDB;
 	private Object[] tableDB;
-	private JPanel panneauSP;
+	private JPanel panneauTable;
 	private JTable table;
-	private JScrollPane tableSP;
-	private GridBagConstraints comboGBC, panneauSP_GBC;
+	private JScrollPane defilant;
+	private GridBagConstraints comboGBC, panneauTableGBC;
 	
 	public PanneauListe() {
 		setLayout(new GridBagLayout());
 		
 		GestionnaireAction item = new GestionnaireAction();
-		
-		panneauSP = new JPanel();
-		
+				
 		comboGBC = new GridBagConstraints();
 		//comboGBC.fill = GridBagConstraints.HORIZONTAL;
 		comboGBC.weightx = 0.5;
@@ -35,13 +33,13 @@ public class PanneauListe extends JPanel{
 		comboGBC.insets = new Insets(0,0,0,20);
 		comboGBC.anchor = GridBagConstraints.NORTHEAST;
 		
-		panneauSP_GBC = new GridBagConstraints();
-		panneauSP_GBC.fill = GridBagConstraints.HORIZONTAL;
-		panneauSP_GBC.ipady = 410;	//taille min tant que j'ai pas trouvé comment redimensionné le JScrollPane
-		panneauSP_GBC.weightx = 0.5;
-		panneauSP_GBC.gridx = 0;
-		panneauSP_GBC.gridy = 1;
-		panneauSP_GBC.gridwidth = 3;
+		panneauTableGBC = new GridBagConstraints();
+		panneauTableGBC.fill = GridBagConstraints.HORIZONTAL;
+		panneauTableGBC.ipady = 410;	//taille min tant que j'ai pas trouvé comment redimensionné le JScrollPane
+		panneauTableGBC.weightx = 0.5;
+		panneauTableGBC.gridx = 0;
+		panneauTableGBC.gridy = 1;
+		panneauTableGBC.gridwidth = 3;
 		
 		try {
 			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
@@ -59,13 +57,13 @@ public class PanneauListe extends JPanel{
 			TableModelGen tableDefaut = AccessBDGen.creerTableModel(prepStatDefaut);
 			table = new JTable(tableDefaut);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			tableSP = new JScrollPane(table);
-			tableSP.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-			tableSP.setMaximumSize(new Dimension(10,10));
+			defilant = new JScrollPane(table);
+			defilant.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 			
-			panneauSP.add(tableSP);
+			panneauTable = new JPanel();
+			panneauTable.add(defilant);
 			
-			add(panneauSP, panneauSP_GBC);
+			add(panneauTable, panneauTableGBC);
 			
 			
 		}
@@ -77,7 +75,7 @@ public class PanneauListe extends JPanel{
 	}
 	
 	public void setPanneauSP(JPanel panneauSP) {
-		this.panneauSP = panneauSP;
+		this.panneauTable = panneauSP;
 	}
 	
 	private class GestionnaireAction implements ItemListener {
@@ -91,11 +89,12 @@ public class PanneauListe extends JPanel{
 					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
 					table = new JTable(tableDemande);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					tableSP = new JScrollPane(table);
-					panneauSP.removeAll();
-					panneauSP.add(tableSP);
-    				panneauSP.validate();
-    				panneauSP.repaint();
+					defilant = new JScrollPane(table);
+					defilant.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+					panneauTable.removeAll();
+					panneauTable.add(defilant);
+    				panneauTable.validate();
+    				panneauTable.repaint();
 	    		}
 			
 			}
