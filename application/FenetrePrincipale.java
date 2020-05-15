@@ -2,7 +2,13 @@ package application;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
+
 import javax.swing.*;
+
+import java.sql.Connection;
+
+import accessBD.AccessBDGen;
 
 
 public class FenetrePrincipale extends JFrame{
@@ -19,17 +25,32 @@ public class FenetrePrincipale extends JFrame{
 	private JMenuBar barreMenu;
 	private JMenu options, aide;
 	private JMenuItem encoder, lister, supprimer, rechercherTypePc, rechercherParAnnee, support, information;
+	private Connection connection;
 	
 	public FenetrePrincipale () {
 		
 		super("Projet sÃ©rie 5");
-		setBounds(600,200,500,550);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
+	
+		try {
+			connection = AccessBDGen.connecter("DbInstallations", "root", "root");
+		}
+		catch(SQLException e) {
+			System.out.println(e.getMessage()); 
+		}
+		
+		setBounds(600,200,500,565);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
 		//setBounds(600,200,500,550);
 		
 		setResizable(false);
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				try {
+					getConnection().close();
+				} catch (SQLException e1) {
+					System.out.println(e1.getMessage()); 
+				}
+				System.out.println("Connection fermée");
 				System.exit(0);
 			}
 		});
@@ -68,21 +89,26 @@ public class FenetrePrincipale extends JFrame{
 		
 		
 		panneauAccueil = new PanneauAccueil();
-		panneauEncodage = new PanneauEncodage();
+		panneauEncodage = new PanneauEncodage(this);
 		panneauSupport = new PanneauSupport();
 		panneauInfo = new PanneauInfo();
-		panneauListe = new PanneauListe();
-		panneauRechercheAnnee = new PanneauRechercheAnnee();
-		panneauRecherchePc = new PanneauRecherchePc();
-		panneauSuppression = new PanneauSuppression();
+		panneauListe = new PanneauListe(this);
+		panneauRechercheAnnee = new PanneauRechercheAnnee(this);
+		panneauRecherchePc = new PanneauRecherchePc(this);
+		panneauSuppression = new PanneauSuppression(this);
 		cont = getContentPane();
 		cont.add(panneauAccueil);
 		
 		panneauEncodage.getRetour().addActionListener(g);
+		panneauSuppression.getAnnuler().addActionListener(g);
 		
 		setJMenuBar(barreMenu);
 		setVisible(true);
 		
+	}
+	
+	public Connection getConnection() {
+		return connection;
 	}
 	
 	private class GestionnaireAction implements ActionListener{
@@ -139,6 +165,13 @@ public class FenetrePrincipale extends JFrame{
 			}
 			
 			if(event.getSource() == panneauEncodage.getRetour()) {
+				cont.removeAll();
+                cont.add(panneauAccueil);
+                cont.validate();
+                cont.repaint();
+			}
+			
+			if(event.getSource() == panneauSuppression.getAnnuler()) {
 				cont.removeAll();
                 cont.add(panneauAccueil);
                 cont.validate();

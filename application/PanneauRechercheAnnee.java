@@ -23,8 +23,11 @@ public class PanneauRechercheAnnee extends JPanel {
 	private JPanel panneauTable;
 	private JScrollPane defilant;
 	private GridBagConstraints comboGBC, panneauTableGBC;
+    private FenetrePrincipale fenetrePrincipale;
 	
-	public PanneauRechercheAnnee() {
+	public PanneauRechercheAnnee(FenetrePrincipale fenetrePrincipale) {
+		
+		this.fenetrePrincipale = fenetrePrincipale;
 		
 		setLayout(new GridBagLayout());
 		
@@ -47,9 +50,8 @@ public class PanneauRechercheAnnee extends JPanel {
 		panneauTableGBC.gridwidth = 3;
 				
 		try {
-			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 			String sqlAnneeSection = "select annee, codesection from anneeetude";
-			PreparedStatement prepStatAnneeSection = connection.prepareStatement(sqlAnneeSection);
+			PreparedStatement prepStatAnneeSection = fenetrePrincipale.getConnection().prepareStatement(sqlAnneeSection);
 			TableModelGen tableAnneeSection = AccessBDGen.creerTableModel(prepStatAnneeSection);
 			annee = new JTable(tableAnneeSection);
 			anneeSection = new ArrayList<>();
@@ -65,7 +67,7 @@ public class PanneauRechercheAnnee extends JPanel {
 					+ "software.CodeSoftware = utilisationsoftware.CodeSoftware inner join anneeetude on "
 					+ "utilisationsoftware.IdAnneeEtude = anneeetude.IdAnneeEtude where anneeetude.Annee = "
 					+ "1 and anneeetude.CodeSection = \"TI\"";
-			PreparedStatement prepStatDefaut = connection.prepareStatement(sqlDefaut);
+			PreparedStatement prepStatDefaut = fenetrePrincipale.getConnection().prepareStatement(sqlDefaut);
 			TableModelGen tableDefaut = AccessBDGen.creerTableModel(prepStatDefaut);
 			table = new JTable(tableDefaut);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -87,7 +89,6 @@ public class PanneauRechercheAnnee extends JPanel {
 	private class Gestionnaire implements ItemListener {
 		public void itemStateChanged(ItemEvent e) {
 			try {
-				Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 				if(e.getSource() == anneeCB) {
 					String sqlInstruction = "select distinct installation.* from installation inner join software on "
 							+ "installation.CodeSoftware = software.CodeSoftware inner join utilisationsoftware on "
@@ -95,7 +96,7 @@ public class PanneauRechercheAnnee extends JPanel {
 							+ "utilisationsoftware.IdAnneeEtude = anneeetude.IdAnneeEtude where anneeetude.Annee = "
 							+ annee.getValueAt(anneeCB.getSelectedIndex(), 0).toString() + " and anneeetude.CodeSection = \"" 
 							+ annee.getValueAt(anneeCB.getSelectedIndex(), 1) + "\"";
-					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					PreparedStatement prepStat = fenetrePrincipale.getConnection().prepareStatement(sqlInstruction);
 					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
 					table = new JTable(tableDemande);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

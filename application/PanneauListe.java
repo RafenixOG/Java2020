@@ -19,14 +19,17 @@ public class PanneauListe extends JPanel{
 	private JTable table;
 	private JScrollPane defilant;
 	private GridBagConstraints comboGBC, panneauTableGBC;
+    private FenetrePrincipale fenetrePrincipale;
 	
-	public PanneauListe() {
+	public PanneauListe(FenetrePrincipale fenetrePrincipale) {
+		
+		this.fenetrePrincipale = fenetrePrincipale;
+		
 		setLayout(new GridBagLayout());
 		
 		GestionnaireAction item = new GestionnaireAction();
 				
 		comboGBC = new GridBagConstraints();
-		//comboGBC.fill = GridBagConstraints.HORIZONTAL;
 		comboGBC.weightx = 0.5;
 		comboGBC.gridx = 2;
 		comboGBC.gridy = 0;
@@ -42,9 +45,8 @@ public class PanneauListe extends JPanel{
 		panneauTableGBC.gridwidth = 3;
 		
 		try {
-			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 			String sqlToutesTable = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA='dbinstallations'";
-			PreparedStatement prepStatToutesTables = connection.prepareStatement(sqlToutesTable);
+			PreparedStatement prepStatToutesTables = fenetrePrincipale.getConnection().prepareStatement(sqlToutesTable);
 			tableDB = AccessBDGen.creerListe1Colonne(prepStatToutesTables);
 			comboDB = new JComboBox(tableDB);
 			comboDB.setSelectedIndex(4);
@@ -53,7 +55,7 @@ public class PanneauListe extends JPanel{
 			
 			//Inintialisation de la table par défaut
 			String sqlDefaut = "select * from installation";
-			PreparedStatement prepStatDefaut = connection.prepareStatement(sqlDefaut);
+			PreparedStatement prepStatDefaut = fenetrePrincipale.getConnection().prepareStatement(sqlDefaut);
 			TableModelGen tableDefaut = AccessBDGen.creerTableModel(prepStatDefaut);
 			table = new JTable(tableDefaut);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -68,7 +70,7 @@ public class PanneauListe extends JPanel{
 			
 		}
 		catch(SQLException e) {
-			
+			System.out.println(e.getMessage()); 
 		}
 		
 		setVisible(true);
@@ -82,10 +84,9 @@ public class PanneauListe extends JPanel{
 		
 		public void itemStateChanged(ItemEvent e) {
 			try {
-				Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 				if(e.getSource() == comboDB) {
 					String sqlInstruction = "select * from " + comboDB.getSelectedItem();
-					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					PreparedStatement prepStat = fenetrePrincipale.getConnection().prepareStatement(sqlInstruction);
 					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
 					table = new JTable(tableDemande);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -99,7 +100,7 @@ public class PanneauListe extends JPanel{
 			
 			}
 			catch(SQLException e1) {
-				
+				System.out.println(e1.getMessage());
 			}
 		}
 	}

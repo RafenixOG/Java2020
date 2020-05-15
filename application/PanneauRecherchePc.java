@@ -22,8 +22,11 @@ public class PanneauRecherchePc extends JPanel {
 	private JTable table;
 	private JPanel panneauTable;
 	private GridBagConstraints comboGBC, panneauTableGBC;
+    private FenetrePrincipale fenetrePrincipale;
 	
-	public PanneauRecherchePc() {
+	public PanneauRecherchePc(FenetrePrincipale fenetrePrincipale) {
+		
+		this.fenetrePrincipale = fenetrePrincipale;
 		
 		setLayout(new GridBagLayout());
 		
@@ -46,10 +49,8 @@ public class PanneauRecherchePc extends JPanel {
 		panneauTableGBC.gridwidth = 3;
 		
 		try {
-			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
-			
 			String sqlDescription = "select Description from typepc";
-			PreparedStatement prepStatDescription = connection.prepareStatement(sqlDescription);
+			PreparedStatement prepStatDescription = fenetrePrincipale.getConnection().prepareStatement(sqlDescription);
 			description = AccessBDGen.creerListe1Colonne(prepStatDescription);
 			descriptionCB = new JComboBox(description);
 			descriptionCB.addItemListener(item);
@@ -58,7 +59,7 @@ public class PanneauRecherchePc extends JPanel {
 			String sqlDefaut = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
 					+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
 					+ "where software.CleInstallation is null and typepc.Description = \""+ descriptionCB.getSelectedItem() +"\"";
-			PreparedStatement prepStatDefaut = connection.prepareStatement(sqlDefaut);
+			PreparedStatement prepStatDefaut = fenetrePrincipale.getConnection().prepareStatement(sqlDefaut);
 			TableModelGen tableDefaut = AccessBDGen.creerTableModel(prepStatDefaut);
 			table = new JTable(tableDefaut);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -81,12 +82,11 @@ public class PanneauRecherchePc extends JPanel {
 		
 		public void itemStateChanged(ItemEvent e) {
 			try {
-				Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 				if(e.getSource() == descriptionCB) {
 					String sqlInstruction = "select distinct software.* from software inner join softwarepreinstalle on software.CodeSoftware"
 							+ "= softwarepreinstalle.CodeSoftware inner join typepc on softwarepreinstalle.IdTypePC = typepc.IdTypePC "
 							+ "where software.CleInstallation is null and typepc.Description = \"" + descriptionCB.getSelectedItem() +"\"";
-					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
+					PreparedStatement prepStat = fenetrePrincipale.getConnection().prepareStatement(sqlInstruction);
 					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
 					table = new JTable(tableDemande);
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
