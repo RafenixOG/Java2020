@@ -3,8 +3,8 @@ package application;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.util.ArrayList;
 import javax.swing.*;
-
 import accessBD.AccessBDGen;
 import accessBD.TableModelGen;
 
@@ -12,12 +12,11 @@ public class PanneauSuppression extends JPanel {
 	private JLabel labelFamilleSoftware, labelIdASupprimer; 
 	private JButton supprimer, annuler; 
 	private JComboBox comboLibelles, comboId;
-	private Object[] familleSoftwareListe, idListe;
+	private Object[] familleSoftwareListe;
 	private JTable visualisationJTable;
 	private JScrollPane visualisationScrollPane;
 	private JPanel panneauTable;
-    private FenetrePrincipale fenetrePrincipale;
-
+  private FenetrePrincipale fenetrePrincipale;
 	
 	public PanneauSuppression(FenetrePrincipale fenetrePrincipale) {
 		
@@ -47,21 +46,25 @@ public class PanneauSuppression extends JPanel {
 			PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 			TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 			visualisationJTable = new JTable(tableVisualisation);
-			visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
+			visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert Ã  ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
 			visualisationScrollPane = new JScrollPane(visualisationJTable);
 			panneauTable = new JPanel();
 			panneauTable.add(visualisationScrollPane);
 			add(panneauTable);
 			
-			labelIdASupprimer = new JLabel("Id installation à supprimer : ");
+			labelIdASupprimer = new JLabel("Id installation Ã  supprimer : ");
 			add(labelIdASupprimer);
 			String recupIdSQL = "Select IdInstallation from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
 					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft";
 			PreparedStatement  prepStatId  = fenetrePrincipale.getConnection().prepareStatement(recupIdSQL);
 			idListe =  AccessBDGen.creerListe1Colonne(prepStatId);
 			
-			comboId = new JComboBox (idListe);
-			comboId.addItemListener(item);
+			ArrayList<Integer> listeId = new ArrayList<Integer>();
+			for (int i = 0 ;visualisationJTable.getRowCount() > 0 && i < visualisationJTable.getRowCount(); i++ ) {
+				listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
+			}
+			
+			comboId = new JComboBox (listeId.toArray());
 			add(comboId);
 			
 			supprimer = new JButton("Supprimer");
@@ -94,12 +97,17 @@ public class PanneauSuppression extends JPanel {
 					PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 					TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 					visualisationJTable = new JTable(tableVisualisation);
-					visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
+					visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 					visualisationScrollPane = new JScrollPane(visualisationJTable);
 					panneauTable.removeAll();
 					panneauTable.add(visualisationScrollPane);
 					panneauTable.validate();
 					panneauTable.repaint();
+					ArrayList<Integer> listeId=new ArrayList<Integer>();
+					for (int i = 0 ;visualisationJTable.getRowCount() > 0 && i < visualisationJTable.getRowCount(); i++ ) {
+						listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
+					}
+					comboId.setModel(new DefaultComboBoxModel(listeId.toArray()));
 				}
 			}
 			
@@ -117,8 +125,24 @@ public class PanneauSuppression extends JPanel {
 					if(n == JOptionPane.YES_OPTION) {
 						int  nbUpdatedLines = prepStatDelete.executeUpdate();
 						System.out.println(nbUpdatedLines);
+						String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
+								+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
+						PreparedStatement  prepStatVisualisation  = connection.prepareStatement(visualisationSQL);
+						TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
+						visualisationJTable = new JTable(tableVisualisation);
+						visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert Ã  ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
+						visualisationScrollPane = new JScrollPane(visualisationJTable);
+						panneauTable.removeAll();
+						panneauTable.add(visualisationScrollPane);
+						panneauTable.validate();
+						panneauTable.repaint();
+						ArrayList<Integer> listeId=new ArrayList<Integer>();
+						for (int i = 0 ;visualisationJTable.getRowCount() > 0 && i < visualisationJTable.getRowCount(); i++ ) {
+							listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
+						}
+						comboId.setModel(new DefaultComboBoxModel(listeId.toArray()));
 					}
-;				}
+				}
 				catch(SQLException e1) {
 					System.out.println(e1.getMessage());
 				}
