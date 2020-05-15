@@ -16,17 +16,20 @@ public class PanneauSuppression extends JPanel {
 	private JTable visualisationJTable;
 	private JScrollPane visualisationScrollPane;
 	private JPanel panneauTable;
+    private FenetrePrincipale fenetrePrincipale;
+
 	
-	public PanneauSuppression() {
+	public PanneauSuppression(FenetrePrincipale fenetrePrincipale) {
+		
+		this.fenetrePrincipale = fenetrePrincipale;
 		
 		setLayout(new FlowLayout());
 		GestionnaireAction item = new GestionnaireAction();
 		GestionnaireAction action = new GestionnaireAction();
 		
 		try {
-			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 			String familleSoftSQL = "select libelle from famillesoftware"; 
-			PreparedStatement  prepStatFamilleSoft  = connection.prepareStatement(familleSoftSQL);
+			PreparedStatement  prepStatFamilleSoft  = fenetrePrincipale.getConnection().prepareStatement(familleSoftSQL);
 			
 			familleSoftwareListe = AccessBDGen.creerListe1Colonne(prepStatFamilleSoft);
 			
@@ -41,7 +44,7 @@ public class PanneauSuppression extends JPanel {
 			
 			String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
 					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
-			PreparedStatement  prepStatVisualisation  = connection.prepareStatement(visualisationSQL);
+			PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 			TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 			visualisationJTable = new JTable(tableVisualisation);
 			visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
@@ -54,7 +57,7 @@ public class PanneauSuppression extends JPanel {
 			add(labelIdASupprimer);
 			String recupIdSQL = "Select IdInstallation from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
 					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft";
-			PreparedStatement  prepStatId  = connection.prepareStatement(recupIdSQL);
+			PreparedStatement  prepStatId  = fenetrePrincipale.getConnection().prepareStatement(recupIdSQL);
 			idListe =  AccessBDGen.creerListe1Colonne(prepStatId);
 			
 			comboId = new JComboBox (idListe);
@@ -76,16 +79,19 @@ public class PanneauSuppression extends JPanel {
 		} 
 	}
 	
+	public JButton getAnnuler() {
+		return annuler;
+	}
+	
 	private class GestionnaireAction implements ItemListener, ActionListener{
 		
 		public void itemStateChanged(ItemEvent e) {
 			
 			try {
-				Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 				if(e.getStateChange() == ItemEvent.SELECTED) {
 					String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
 							+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
-					PreparedStatement  prepStatVisualisation  = connection.prepareStatement(visualisationSQL);
+					PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 					TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 					visualisationJTable = new JTable(tableVisualisation);
 					visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
@@ -105,9 +111,8 @@ public class PanneauSuppression extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == supprimer) {
 				try {
-					Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root");
 					String deleteSQL = "DELETE FROM installation where IdInstallation = " + comboId.getSelectedItem();
-					PreparedStatement  prepStatDelete  = connection.prepareStatement(deleteSQL);
+					PreparedStatement  prepStatDelete  = fenetrePrincipale.getConnection().prepareStatement(deleteSQL);
 					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id :" + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
 					if(n == JOptionPane.YES_OPTION) {
 						int  nbUpdatedLines = prepStatDelete.executeUpdate();

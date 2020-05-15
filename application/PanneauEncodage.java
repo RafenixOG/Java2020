@@ -54,21 +54,19 @@ public class PanneauEncodage extends JPanel{
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
     private Properties p;
-    private PanneauListe panneauListe;
+    private FenetrePrincipale fenetrePrincipale;
 	
-	
-	public PanneauEncodage() {
+	public PanneauEncodage(FenetrePrincipale fenetrePrincipale) {
 		
-		panneauListe = new PanneauListe();
-		
+		this.fenetrePrincipale = fenetrePrincipale;
+				
 		try  {
-			Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root"); 
 			String softwareSQL = "select Nom from software"; 
 			String osSQL = "select Libelle from os";
 			String responsableSQL = "select NomPrenom from responsablereseaux";
-			PreparedStatement  myPrepStatSoftware  = connection.prepareStatement(softwareSQL);
-			PreparedStatement  myPrepStatOs  = connection.prepareStatement(osSQL);
-			PreparedStatement  myPrepStatResponsable  = connection.prepareStatement(responsableSQL);
+			PreparedStatement  myPrepStatSoftware  = fenetrePrincipale.getConnection().prepareStatement(softwareSQL);
+			PreparedStatement  myPrepStatOs  = fenetrePrincipale.getConnection().prepareStatement(osSQL);
+			PreparedStatement  myPrepStatResponsable  = fenetrePrincipale.getConnection().prepareStatement(responsableSQL);
 			softwareListe = AccessBDGen.creerListe1Colonne(myPrepStatSoftware);
 			osListe = AccessBDGen.creerListe1Colonne(myPrepStatOs);
 			responsableListe = AccessBDGen.creerListe1Colonne(myPrepStatResponsable);
@@ -161,10 +159,10 @@ public class PanneauEncodage extends JPanel{
 			setVisible(true);
 			
 			insertionSQL = "insert into installation values (?,?,?,?,?,?,?,?,?,?,?)";
-			myPrepStatInsertion = connection.prepareStatement(insertionSQL);
+			myPrepStatInsertion = fenetrePrincipale.getConnection().prepareStatement(insertionSQL);
 			
 			String idInstallSQL = "select max(IdInstallation) from installation"; //SQL mettre "MAX" pour avoir la valeur la plus élevée
-			PreparedStatement myPrepStatIdInstall = connection.prepareStatement(idInstallSQL);
+			PreparedStatement myPrepStatIdInstall = fenetrePrincipale.getConnection().prepareStatement(idInstallSQL);
 			idInstallListe = AccessBDGen.creerListe1Colonne(myPrepStatIdInstall);
 			idInstallInt = (int)idInstallListe[0] + 1;
 			idInstallTF.setText(String.valueOf(idInstallInt));
@@ -244,15 +242,14 @@ public class PanneauEncodage extends JPanel{
 					else {
 						myPrepStatInsertion.setNull(8, Types.TIMESTAMP);
 					}
-					Connection  connection  =  AccessBDGen.connecter("DbInstallations", "root", "root"); 
 					String instructionCodeSoftware = "select CodeSoftware from software where Nom = \"" + softwareCB.getSelectedItem() + "\"";
-					PreparedStatement myPrepStatCodeSoftware = connection.prepareStatement(instructionCodeSoftware);
+					PreparedStatement myPrepStatCodeSoftware = fenetrePrincipale.getConnection().prepareStatement(instructionCodeSoftware);
 					Object[] codeSoftware = AccessBDGen.creerListe1Colonne(myPrepStatCodeSoftware);
 					String instructionCodeResponsable = "select Matricule from responsablereseaux where NomPrenom = \"" + responsableCB.getSelectedItem() + "\"";
-					PreparedStatement myPrepStatCodeResponsable = connection.prepareStatement(instructionCodeResponsable);
+					PreparedStatement myPrepStatCodeResponsable = fenetrePrincipale.getConnection().prepareStatement(instructionCodeResponsable);
 					Object[] codeResponsable = AccessBDGen.creerListe1Colonne(myPrepStatCodeResponsable);
 					String instructionCodeOs = "select CodeOS from os where Libelle = \"" + osCB.getSelectedItem() + "\"";
-					PreparedStatement myPrepStatCodeOs = connection.prepareStatement(instructionCodeOs);
+					PreparedStatement myPrepStatCodeOs = fenetrePrincipale.getConnection().prepareStatement(instructionCodeOs);
 					Object[] codeOs = AccessBDGen.creerListe1Colonne(myPrepStatCodeOs);
 					myPrepStatInsertion.setString(9, (String)codeSoftware[0]); //code du software
 					myPrepStatInsertion.setString(10, (String)codeResponsable[0]); //code du responsable
@@ -266,20 +263,6 @@ public class PanneauEncodage extends JPanel{
 					dureeInstallTF.setText("");
 					refProcedureTF.setText("");
 					validationBG.clearSelection();
-					
-					//mise à jour seemless du PanneauListe (ne fonctionne pas)
-					String sqlInstruction = "select * from installation";
-					PreparedStatement prepStat = connection.prepareStatement(sqlInstruction);
-					TableModelGen tableDemande = AccessBDGen.creerTableModel(prepStat);
-					JTable table = new JTable(tableDemande);
-					table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					JScrollPane tableSP = new JScrollPane(table);
-					JPanel pan = new JPanel();
-					pan.removeAll();
-					pan.add(tableSP);
-					pan.validate();
-					pan.repaint();
-					panneauListe.setPanneauSP(pan);
 				} 
 				catch (SQLException e1) {
 					System.out.println(e1.getMessage());
