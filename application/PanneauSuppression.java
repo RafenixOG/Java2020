@@ -16,7 +16,8 @@ public class PanneauSuppression extends JPanel {
 	private JTable visualisationJTable;
 	private JScrollPane visualisationScrollPane;
 	private JPanel panneauTable;
-  private FenetrePrincipale fenetrePrincipale;
+    private FenetrePrincipale fenetrePrincipale;
+
 	
 	public PanneauSuppression(FenetrePrincipale fenetrePrincipale) {
 		
@@ -54,10 +55,6 @@ public class PanneauSuppression extends JPanel {
 			
 			labelIdASupprimer = new JLabel("Id installation à supprimer : ");
 			add(labelIdASupprimer);
-			String recupIdSQL = "Select IdInstallation from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
-					+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft";
-			PreparedStatement  prepStatId  = fenetrePrincipale.getConnection().prepareStatement(recupIdSQL);
-			idListe =  AccessBDGen.creerListe1Colonne(prepStatId);
 			
 			ArrayList<Integer> listeId = new ArrayList<Integer>();
 			for (int i = 0 ;visualisationJTable.getRowCount() > 0 && i < visualisationJTable.getRowCount(); i++ ) {
@@ -97,7 +94,7 @@ public class PanneauSuppression extends JPanel {
 					PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 					TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 					visualisationJTable = new JTable(tableVisualisation);
-					visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
 					visualisationScrollPane = new JScrollPane(visualisationJTable);
 					panneauTable.removeAll();
 					panneauTable.add(visualisationScrollPane);
@@ -124,13 +121,13 @@ public class PanneauSuppression extends JPanel {
 					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id :" + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
 					if(n == JOptionPane.YES_OPTION) {
 						int  nbUpdatedLines = prepStatDelete.executeUpdate();
-						System.out.println(nbUpdatedLines);
+						System.out.println("Lignes supprimée : " + nbUpdatedLines);
 						String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
 								+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
-						PreparedStatement  prepStatVisualisation  = connection.prepareStatement(visualisationSQL);
+						PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
 						TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
 						visualisationJTable = new JTable(tableVisualisation);
-						visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert à ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
+						visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert � ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
 						visualisationScrollPane = new JScrollPane(visualisationJTable);
 						panneauTable.removeAll();
 						panneauTable.add(visualisationScrollPane);
