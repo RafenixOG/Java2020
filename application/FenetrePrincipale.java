@@ -14,7 +14,6 @@ import accessBD.AccessBDGen;
 public class FenetrePrincipale extends JFrame{
 	
 	private Container cont;
-	private FenetreConnection fenetreConnection;
 	private PanneauAccueil panneauAccueil;
 	private PanneauEncodage panneauEncodage;
 	private PanneauSupport panneauSupport;
@@ -25,12 +24,12 @@ public class FenetrePrincipale extends JFrame{
 	private PanneauSuppression panneauSuppression;
 	private JMenuBar barreMenu;
 	private JMenu options, aide;
-	private JMenuItem encoder, lister, supprimer, rechercherTypePc, rechercherParAnnee, support, information, connectionMenuItem;
+	private JMenuItem encoder, lister, supprimer, rechercherTypePc, rechercherParAnnee, support, information;
 	private Connection connection;
 	
 	public FenetrePrincipale () {
 		
-		super("Projet série 5");
+		super("Projet sÃ©rie 5");
 	
 		try {
 			connection = AccessBDGen.connecter("DbInstallations", "root", "root");
@@ -64,7 +63,6 @@ public class FenetrePrincipale extends JFrame{
 		barreMenu.add(options);
 		barreMenu.add(aide);
 		
-		connectionMenuItem = new JMenuItem("Connexion DB");
 		encoder = new JMenuItem("Encoder");
 		lister = new JMenuItem("Lister");
 		supprimer = new JMenuItem("Supprimer");
@@ -73,7 +71,6 @@ public class FenetrePrincipale extends JFrame{
 		support = new JMenuItem("Support");
 		information = new JMenuItem("Information");
 		
-		options.add(connectionMenuItem);
 		options.add(encoder);
 		options.add(lister);
 		options.add(supprimer);
@@ -82,7 +79,6 @@ public class FenetrePrincipale extends JFrame{
 		aide.add(support);
 		aide.add(information);
 		
-		connectionMenuItem.addActionListener(g);
 		encoder.addActionListener(g);
 		lister.addActionListener(g);
 		supprimer.addActionListener(g);
@@ -91,7 +87,7 @@ public class FenetrePrincipale extends JFrame{
 		support.addActionListener(g);
 		information.addActionListener(g);
 		
-		fenetreConnection = new FenetreConnection();
+		
 		panneauAccueil = new PanneauAccueil();
 		panneauEncodage = new PanneauEncodage(this);
 		panneauSupport = new PanneauSupport();
@@ -118,10 +114,6 @@ public class FenetrePrincipale extends JFrame{
 	private class GestionnaireAction implements ActionListener{
 		
 		public void actionPerformed(ActionEvent event) {
-			
-			if (event.getSource() == connectionMenuItem) {
-				fenetreConnection = new FenetreConnection();
-			}
 			
 			if (event.getSource() == encoder) {
 				cont.removeAll();
