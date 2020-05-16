@@ -16,7 +16,6 @@ public class FenetrePrincipale extends JFrame{
 	private Container cont;
 	private PanneauAccueil panneauAccueil;
 	private PanneauEncodage panneauEncodage;
-	private PanneauSupport panneauSupport;
 	private PanneauInfo panneauInfo;
 	private PanneauListe panneauListe;
 	private PanneauRechercheAnnee panneauRechercheAnnee;
@@ -26,6 +25,7 @@ public class FenetrePrincipale extends JFrame{
 	private JMenu options, aide;
 	private JMenuItem encoder, lister, supprimer, rechercherTypePc, rechercherParAnnee, support, information;
 	private Connection connection;
+	private FenetreSupport fenetreSupport;
 	
 	public FenetrePrincipale () {
 		
@@ -38,8 +38,10 @@ public class FenetrePrincipale extends JFrame{
 			System.out.println(e.getMessage()); 
 		}
 		
-		setBounds(600,200,500,565);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
+		setSize(500,565);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
 		//setBounds(600,200,500,550);
+		
+		setLocationRelativeTo(null);
 		
 		setResizable(false);
 		
@@ -90,7 +92,6 @@ public class FenetrePrincipale extends JFrame{
 		
 		panneauAccueil = new PanneauAccueil();
 		panneauEncodage = new PanneauEncodage(this);
-		panneauSupport = new PanneauSupport();
 		panneauInfo = new PanneauInfo();
 		panneauListe = new PanneauListe(this);
 		panneauRechercheAnnee = new PanneauRechercheAnnee(this);
@@ -123,10 +124,7 @@ public class FenetrePrincipale extends JFrame{
 			}
 			
 			if (event.getSource() == support) {
-				cont.removeAll();
-                cont.add(panneauSupport);
-                cont.validate();
-                cont.repaint();
+				fenetreSupport = new FenetreSupport();
 			}
 			
 			if (event.getSource() == information) {
