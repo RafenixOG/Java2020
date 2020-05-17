@@ -12,7 +12,7 @@ public class PanneauInfo extends JPanel {
 	public PanneauInfo(){
 		
 		setLayout(new GridBagLayout());
-		texteInfo = new JLabel("<html>Projet réalisé pour le cour de Java de 2020<br><br>Développé par Ramo et Robin</html>");
+		texteInfo = new JLabel("<html>Projet rÃ©alisÃ© pour le cours de Java de 2020<br><br>DÃ©veloppÃ© par Ramo et Robin</html>");
 		texteInfo.setFont(new Font(police, style, 14));
 		add(texteInfo);
 		
