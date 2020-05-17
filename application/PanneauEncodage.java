@@ -164,7 +164,12 @@ public class PanneauEncodage extends JPanel{
 			String idInstallSQL = "select max(IdInstallation) from installation"; //SQL mettre "MAX" pour avoir la valeur la plus �lev�e
 			PreparedStatement myPrepStatIdInstall = fenetrePrincipale.getConnection().prepareStatement(idInstallSQL);
 			idInstallListe = AccessBDGen.creerListe1Colonne(myPrepStatIdInstall);
-			idInstallInt = (int)idInstallListe[0] + 1;
+			if(idInstallListe[0] == null) {
+				idInstallInt = 1;
+			}
+			else {
+				idInstallInt = (int)idInstallListe[0] + 1;
+			}
 			idInstallTF.setText(String.valueOf(idInstallInt));
 			
 			
