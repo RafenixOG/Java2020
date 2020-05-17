@@ -38,7 +38,7 @@ public class FenetrePrincipale extends JFrame{
 			System.out.println(e.getMessage()); 
 		}
 		
-		setSize(500,565);	//taille tant que le problème de taille du JScrollPane n'a pas été résolu
+		setSize(500,565);	//taille tant que le problï¿½me de taille du JScrollPane n'a pas ï¿½tï¿½ rï¿½solu
 		//setBounds(600,200,500,550);
 		
 		setLocationRelativeTo(null);
@@ -52,7 +52,7 @@ public class FenetrePrincipale extends JFrame{
 				} catch (SQLException e1) {
 					System.out.println(e1.getMessage()); 
 				}
-				System.out.println("Connection fermée");
+				System.out.println("Connection fermÃ©e");
 				System.exit(0);
 			}
 		});

@@ -13,7 +13,7 @@ public class PanneauAccueil extends JPanel {
     {
         setLayout(new GridBagLayout());
 
-        texteAccueil = new JLabel("<html>Bienvenue dans notre projet java !<br>Naviguez à travers les différents menus.</html>");
+        texteAccueil = new JLabel("<html>Bienvenue dans notre projet java !<br>Naviguez Ã  travers les diffÃ©rents menus.</html>");
         texteAccueil.setFont(new Font(police, style, 14));
         add(texteAccueil);
 

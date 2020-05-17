@@ -118,7 +118,7 @@ public class PanneauSuppression extends JPanel {
 				try {
 					String deleteSQL = "DELETE FROM installation where IdInstallation = " + comboId.getSelectedItem();
 					PreparedStatement  prepStatDelete  = fenetrePrincipale.getConnection().prepareStatement(deleteSQL);
-					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id :" + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
+					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id : " + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
 					if(n == JOptionPane.YES_OPTION) {
 						int  nbUpdatedLines = prepStatDelete.executeUpdate();
 						System.out.println("Lignes supprimée : " + nbUpdatedLines);
