@@ -71,6 +71,9 @@ public class PanneauSuppression extends JPanel {
 			annuler = new JButton ("Annuler");
 			add(annuler);
 			
+			if (comboId.getItemCount() == 0) supprimer.setEnabled(false);
+			else supprimer.setEnabled(true);
+			
 			setVisible(true);
 		}
 		
@@ -105,6 +108,8 @@ public class PanneauSuppression extends JPanel {
 						listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
 					}
 					comboId.setModel(new DefaultComboBoxModel(listeId.toArray()));
+					if (comboId.getItemCount() == 0) supprimer.setEnabled(false);
+					else supprimer.setEnabled(true);
 				}
 			}
 			
@@ -118,29 +123,29 @@ public class PanneauSuppression extends JPanel {
 				try {
 					String deleteSQL = "DELETE FROM installation where IdInstallation = " + comboId.getSelectedItem();
 					PreparedStatement  prepStatDelete  = fenetrePrincipale.getConnection().prepareStatement(deleteSQL);
-					if (comboId.getItemCount() != 0) {
-						int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id : " + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
-						if(n == JOptionPane.YES_OPTION) {
-							int  nbUpdatedLines = prepStatDelete.executeUpdate();
-							System.out.println("Lignes supprimée : " + nbUpdatedLines);
-							String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
-									+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
-							PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
-							TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
-							visualisationJTable = new JTable(tableVisualisation);
-							visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert � ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
-							visualisationScrollPane = new JScrollPane(visualisationJTable);
-							panneauTable.removeAll();
-							panneauTable.add(visualisationScrollPane);
-							panneauTable.validate();
-							panneauTable.repaint();
-							ArrayList<Integer> listeId=new ArrayList<Integer>();
-							for (int i = 0 ; i < visualisationJTable.getRowCount(); i++ ) {
-								listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
-							}
-							comboId.setModel(new DefaultComboBoxModel(listeId.toArray()));
+					int n = JOptionPane.showConfirmDialog(getParent(),"Confirmez vous la suppression de l'id : " + comboId.getSelectedItem() + " ?","Confirmez votre choix",JOptionPane.YES_NO_OPTION);
+					if(n == JOptionPane.YES_OPTION) {
+						int  nbUpdatedLines = prepStatDelete.executeUpdate();
+						System.out.println("Lignes supprimée : " + nbUpdatedLines);
+						String visualisationSQL = "Select IdInstallation ,DateInstallation, software.CodeSoftware, Matricule from installation inner join software on installation.CodeSoftware = software.CodeSoftware "
+								+ "inner join famillesoftware on software.IdFamSoft = famillesoftware.IdFamSoft WHERE famillesoftware.libelle =\"" + comboLibelles.getSelectedItem() + "\"";
+						PreparedStatement  prepStatVisualisation  = fenetrePrincipale.getConnection().prepareStatement(visualisationSQL);
+						TableModelGen tableVisualisation = AccessBDGen.creerTableModel(prepStatVisualisation);
+						visualisationJTable = new JTable(tableVisualisation);
+						visualisationJTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); //sert � ce que la JTable ne change pas de taille en fonction de ce qu'il y a dedans
+						visualisationScrollPane = new JScrollPane(visualisationJTable);
+						panneauTable.removeAll();
+						panneauTable.add(visualisationScrollPane);
+						panneauTable.validate();
+						panneauTable.repaint();
+						ArrayList<Integer> listeId=new ArrayList<Integer>();
+						for (int i = 0 ; i < visualisationJTable.getRowCount(); i++ ) {
+							listeId.add((Integer) (visualisationJTable.getValueAt(i,0)));
 						}
-					};  
+						comboId.setModel(new DefaultComboBoxModel(listeId.toArray()));
+						if (comboId.getItemCount() == 0) supprimer.setEnabled(false);
+						else supprimer.setEnabled(true);
+					}
 				}
 				catch(SQLException e1) {
 					System.out.println(e1.getMessage());
