@@ -49,7 +49,7 @@ public class PanneauEncodage extends JPanel{
 	private int idInstallInt;
 	private String insertionSQL;
 	private PreparedStatement myPrepStatInsertion;
-	//Besoin du jdatepicker-1.3.4.jar, à ajouter dans les propriétés du projet comme pour le jar de la DB
+	//Besoin du jdatepicker-1.3.4.jar, ï¿½ ajouter dans les propriï¿½tï¿½s du projet comme pour le jar de la DB
 	private UtilDateModel model;
     private JDatePanelImpl datePanel;
     private JDatePickerImpl datePicker;
@@ -90,12 +90,12 @@ public class PanneauEncodage extends JPanel{
 			add(commentaire);
 			commentaireTF = new JTextField(100);
 			add(commentaireTF);
-			dureeInstall = new JLabel("Durée de l'installation : ");
+			dureeInstall = new JLabel("DurÃ©e de l'installation : ");
 			dureeInstall.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(dureeInstall);
 			dureeInstallTF = new JTextField(4);		//Il faudra transformer en int + gestion erreur pas possible de transformer en int
 			add(dureeInstallTF);
-			refProcedure = new JLabel("Référence de la procédure d'installation :");
+			refProcedure = new JLabel("RÃ©fÃ©rence de la procÃ©dure d'installation :");
 			refProcedure.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(refProcedure);
 			refProcedureTF = new JTextField(50);
@@ -105,13 +105,13 @@ public class PanneauEncodage extends JPanel{
 			add(validation);
 			panneauRadio = new JPanel();
 			panneauRadio.setLayout(new GridLayout(3,1,0,3));
-			termine = new JRadioButton("Terminée");
+			termine = new JRadioButton("TerminÃ©e");
 			termine.addItemListener(item);
 			panneauRadio.add(termine);
 			enCours = new JRadioButton("En cours");
 			enCours.addItemListener(item);
 			panneauRadio.add(enCours);
-			aPrevoir = new JRadioButton("À prévoir");
+			aPrevoir = new JRadioButton("Ã€ prÃ©voir");
 			aPrevoir.addItemListener(item);
 			panneauRadio.add(aPrevoir);
 			validationBG = new ButtonGroup();
@@ -120,14 +120,14 @@ public class PanneauEncodage extends JPanel{
 			validationBG.add(aPrevoir);
 			panneauRadio.setVisible(true);
 			add(panneauRadio);
-			dateValidation = new JLabel("Date de validation :");		//gestion d'erreur si la date n'à pas été entrée au format dd/mm/YYYY
+			dateValidation = new JLabel("Date de validation :");		//gestion d'erreur si la date n'ï¿½ pas ï¿½tï¿½ entrï¿½e au format dd/mm/YYYY
 			dateValidation.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(dateValidation);
-			//Tout ce qui est nécessaire au JDatePicker--------
+			//Tout ce qui est nï¿½cessaire au JDatePicker--------
 			p = new Properties();
 	        p.put("text.today", "Ajourd'hui");
 	        p.put("text.month", "Mois");
-	        p.put("text.year", "Année");
+	        p.put("text.year", "AnnÃ©e");
 	        model = new UtilDateModel();
 	        datePanel = new JDatePanelImpl(model, p);
 	        datePicker = new JDatePickerImpl(datePanel, new DateLabelFormatter());
@@ -137,17 +137,17 @@ public class PanneauEncodage extends JPanel{
 			software = new JLabel("Software :");
 			software.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(software);
-			softwareCB = new JComboBox(softwareListe);		//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
+			softwareCB = new JComboBox(softwareListe);		//Trouver un moyen de rï¿½cupï¿½rer toutes les valeurs de la colone CodeSoftware et les ajouter ï¿½ softwareListe
 			add(softwareCB);
 			responsable = new JLabel("Nom du responsable :");
 			responsable.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(responsable);
-			responsableCB = new JComboBox(responsableListe);	//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
+			responsableCB = new JComboBox(responsableListe);	//Trouver un moyen de rï¿½cupï¿½rer toutes les valeurs de la colone CodeSoftware et les ajouter ï¿½ softwareListe
 			add(responsableCB);
 			os = new JLabel("Nom OS :");
 			os.setHorizontalAlignment(SwingConstants.RIGHT);
 			add(os);
-			osCB = new JComboBox(osListe);		//Trouver un moyen de récupérer toutes les valeurs de la colone CodeSoftware et les ajouter à softwareListe
+			osCB = new JComboBox(osListe);		//Trouver un moyen de rï¿½cupï¿½rer toutes les valeurs de la colone CodeSoftware et les ajouter ï¿½ softwareListe
 			add(osCB);
 			valider = new JButton("Valider");
 			valider.addActionListener(action);
@@ -161,7 +161,7 @@ public class PanneauEncodage extends JPanel{
 			insertionSQL = "insert into installation values (?,?,?,?,?,?,?,?,?,?,?)";
 			myPrepStatInsertion = fenetrePrincipale.getConnection().prepareStatement(insertionSQL);
 			
-			String idInstallSQL = "select max(IdInstallation) from installation"; //SQL mettre "MAX" pour avoir la valeur la plus élevée
+			String idInstallSQL = "select max(IdInstallation) from installation"; //SQL mettre "MAX" pour avoir la valeur la plus ï¿½levï¿½e
 			PreparedStatement myPrepStatIdInstall = fenetrePrincipale.getConnection().prepareStatement(idInstallSQL);
 			idInstallListe = AccessBDGen.creerListe1Colonne(myPrepStatIdInstall);
 			idInstallInt = (int)idInstallListe[0] + 1;
@@ -254,9 +254,8 @@ public class PanneauEncodage extends JPanel{
 					myPrepStatInsertion.setString(9, (String)codeSoftware[0]); //code du software
 					myPrepStatInsertion.setString(10, (String)codeResponsable[0]); //code du responsable
 					myPrepStatInsertion.setString(11, (String)codeOs[0]); //code de l'os
-					System.out.println("passé toutes les instructions");
 					int  nbUpdatedLines = myPrepStatInsertion.executeUpdate();
-					System.out.println("Lignes mises à jour :" + nbUpdatedLines);
+					System.out.println("Lignes mises Ã  jour :" + nbUpdatedLines);
 					idInstallInt++;
 					idInstallTF.setText(String.valueOf(idInstallInt));
 					commentaireTF.setText("");
@@ -268,10 +267,10 @@ public class PanneauEncodage extends JPanel{
 					System.out.println(e1.getMessage());
 				}
 				catch(NumberFormatException nfe) {
-					JOptionPane.showMessageDialog(getParent(), "La durée que vous avez introduit n'est pas un entier.\nVeuillez introduire une durée en minutes.", "ERREUR TYPE VALEUR ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(getParent(), "La durÃ©e que vous avez introduit n'est pas un entier.\nVeuillez introduire une durÃ©e en minutes.", "ERREUR TYPE VALEUR Ã‰RRONÃ‰", JOptionPane.ERROR_MESSAGE);
 				}
 				catch(DateException dateErronee) {
-					JOptionPane.showMessageDialog(getParent(), dateErronee, "ERREUR DATE ÉRRONÉ", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(getParent(), dateErronee, "ERREUR DATE Ã‰RRONÃ‰", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			if(e.getSource() == retour) {
