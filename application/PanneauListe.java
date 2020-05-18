@@ -27,7 +27,7 @@ public class PanneauListe extends JPanel{
 		
 		setLayout(new GridBagLayout());
 		
-		GestionnaireAction item = new GestionnaireAction();
+		Gestionnaire item = new Gestionnaire();
 				
 		comboGBC = new GridBagConstraints();
 		comboGBC.weightx = 0.5;
@@ -38,7 +38,7 @@ public class PanneauListe extends JPanel{
 		
 		panneauTableGBC = new GridBagConstraints();
 		panneauTableGBC.fill = GridBagConstraints.HORIZONTAL;
-		panneauTableGBC.ipady = 410;	//taille min tant que j'ai pas trouvé comment redimensionné le JScrollPane
+		panneauTableGBC.ipady = 410;	//taille min tant que j'ai pas trouvï¿½ comment redimensionnï¿½ le JScrollPane
 		panneauTableGBC.weightx = 0.5;
 		panneauTableGBC.gridx = 0;
 		panneauTableGBC.gridy = 1;
@@ -49,12 +49,11 @@ public class PanneauListe extends JPanel{
 			PreparedStatement prepStatToutesTables = fenetrePrincipale.getConnection().prepareStatement(sqlToutesTable);
 			tableDB = AccessBDGen.creerListe1Colonne(prepStatToutesTables);
 			comboDB = new JComboBox(tableDB);
-			comboDB.setSelectedIndex(4);
 			comboDB.addItemListener(item);
 			add(comboDB, comboGBC);
 			
-			//Inintialisation de la table par défaut
-			String sqlDefaut = "select * from installation";
+			//Inintialisation de la table par dï¿½faut
+			String sqlDefaut = "select * from " + comboDB.getSelectedItem();
 			PreparedStatement prepStatDefaut = fenetrePrincipale.getConnection().prepareStatement(sqlDefaut);
 			TableModelGen tableDefaut = AccessBDGen.creerTableModel(prepStatDefaut);
 			table = new JTable(tableDefaut);
@@ -80,7 +79,7 @@ public class PanneauListe extends JPanel{
 		this.panneauTable = panneauSP;
 	}
 	
-	private class GestionnaireAction implements ItemListener {
+	private class Gestionnaire implements ItemListener {
 		
 		public void itemStateChanged(ItemEvent e) {
 			try {
